@@ -1,56 +1,61 @@
-// UC2 & UC3: Factory Robot Hazard Analyzer
+// UC4: Introduce Validation Using Conditional Logic
 // Author: Prajwal
 
 import java.util.Scanner;
 
 public class FactoryRobotHazardAnalyzer {
 
-    // Program entry point
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
 
-        // UC2: Accept Robot Hazard Inputs
-
-        System.out.print("Enter Arm Precision: ");
+        // Accept Inputs
+        System.out.print("Enter Arm Precision (0.1 - 1.0): ");
         double armPrecision = scanner.nextDouble();
 
-        System.out.print("Enter Worker Density: ");
+        System.out.print("Enter Worker Density (1 - 100): ");
         int workerDensity = scanner.nextInt();
 
         scanner.nextLine(); // Clear buffer
 
-        System.out.print("Enter Machinery State: ");
+        System.out.print("Enter Machinery State (Active/Idle/Maintenance): ");
         String machineryState = scanner.nextLine();
 
-        // UC3: Calculate Hazard Risk Score
+        // -----------------------------
+        // Validation Using if-else
+        // -----------------------------
 
-        double hazardRiskScore = calculateHazardRisk(armPrecision, workerDensity, machineryState);
+        if (armPrecision <= 0 || armPrecision > 1) {
+            System.out.println("Error: Arm Precision must be between 0.1 and 1.0");
+        }
+        else if (workerDensity <= 0 || workerDensity > 100) {
+            System.out.println("Error: Worker Density must be between 1 and 100");
+        }
+        else if (!(machineryState.equalsIgnoreCase("Active") ||
+                machineryState.equalsIgnoreCase("Idle") ||
+                machineryState.equalsIgnoreCase("Maintenance"))) {
 
-        // Displaying calculated hazard risk score
-        System.out.println("\n--- Hazard Analysis Result ---");
-        System.out.println("Hazard Risk Score: " + hazardRiskScore);
+            System.out.println("Error: Machinery State must be Active, Idle, or Maintenance");
+        }
+        else {
 
-        scanner.close();
-    }
+            // If all inputs are valid → Calculate Risk
 
-    // Method to calculate hazard risk score
-    public static double calculateHazardRisk(double armPrecision, int workerDensity, String machineryState) {
+            double machineryFactor;
 
-        // Assign machinery risk factor based on state
-        double machineryFactor;
+            if (machineryState.equalsIgnoreCase("Active")) {
+                machineryFactor = 1.5;
+            } else if (machineryState.equalsIgnoreCase("Idle")) {
+                machineryFactor = 1.0;
+            } else {
+                machineryFactor = 0.5;
+            }
 
-        if (machineryState.equalsIgnoreCase("Active")) {
-            machineryFactor = 1.5;
-        } else if (machineryState.equalsIgnoreCase("Idle")) {
-            machineryFactor = 1.0;
-        } else {
-            machineryFactor = 0.5;  // Maintenance or other states
+            double hazardRisk = (workerDensity * machineryFactor) / armPrecision;
+
+            System.out.println("\nHazard Risk Score: " + hazardRisk);
         }
 
-        // Business Logic Formula (Assumed Valid Inputs)
-        double hazardRisk = (workerDensity * machineryFactor) / armPrecision;
-
-        return hazardRisk;
+        scanner.close();
     }
 }
