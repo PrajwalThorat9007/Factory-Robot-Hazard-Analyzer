@@ -1,7 +1,16 @@
-// UC5: Refactor Validation into a Separate Method
+// UC6: Introduce Custom Exception – RobotSafetyException
 // Author: Prajwal
 
 import java.util.Scanner;
+
+// Custom Exception Class
+class RobotSafetyException extends Exception {
+
+    // Constructor that passes message to parent Exception class
+    public RobotSafetyException(String message) {
+        super(message);
+    }
+}
 
 public class FactoryRobotHazardAnalyzer {
 
@@ -9,51 +18,61 @@ public class FactoryRobotHazardAnalyzer {
 
         Scanner scanner = new Scanner(System.in);
 
-        // Collect Inputs
-        System.out.print("Enter Arm Precision (0.1 - 1.0): ");
-        double armPrecision = scanner.nextDouble();
+        try {
 
-        System.out.print("Enter Worker Density (1 - 100): ");
-        int workerDensity = scanner.nextInt();
+            // Input Collection
+            System.out.print("Enter Arm Precision (0.1 - 1.0): ");
+            double armPrecision = scanner.nextDouble();
 
-        scanner.nextLine(); // Clear buffer
+            System.out.print("Enter Worker Density (1 - 100): ");
+            int workerDensity = scanner.nextInt();
 
-        System.out.print("Enter Machinery State (Active/Idle/Maintenance): ");
-        String machineryState = scanner.nextLine();
+            scanner.nextLine(); // Clear buffer
 
-        // Call separate method for validation + calculation
-        double hazardRisk = calculateHazardRisk(armPrecision, workerDensity, machineryState);
+            System.out.print("Enter Machinery State (Active/Idle/Maintenance): ");
+            String machineryState = scanner.nextLine();
 
-        // Print result (only if valid)
-        if (hazardRisk != -1) {
+            // Method call that may throw exception
+            double hazardRisk = calculateHazardRisk(
+                    armPrecision, workerDensity, machineryState);
+
             System.out.println("\nHazard Risk Score: " + hazardRisk);
-        }
 
-        scanner.close();
+        } catch (RobotSafetyException e) {
+
+            // Exception message displayed by exception itself
+            System.out.println("Safety Error: " + e.getMessage());
+
+        } finally {
+            scanner.close();
+        }
     }
 
-    // Method that handles both validation and hazard calculation
+    // Method with validation + calculation
+    // Declaring that it may throw RobotSafetyException
     public static double calculateHazardRisk(double armPrecision,
                                              int workerDensity,
-                                             String machineryState) {
+                                             String machineryState)
+            throws RobotSafetyException {
 
-        // Input Validation
+        // Validation Logic
+
         if (armPrecision <= 0 || armPrecision > 1) {
-            System.out.println("Error: Arm Precision must be between 0.1 and 1.0");
-            return -1;
+            throw new RobotSafetyException(
+                    "Arm Precision must be between 0.1 and 1.0");
         }
 
         if (workerDensity <= 0 || workerDensity > 100) {
-            System.out.println("Error: Worker Density must be between 1 and 100");
-            return -1;
+            throw new RobotSafetyException(
+                    "Worker Density must be between 1 and 100");
         }
 
         if (!(machineryState.equalsIgnoreCase("Active") ||
                 machineryState.equalsIgnoreCase("Idle") ||
                 machineryState.equalsIgnoreCase("Maintenance"))) {
 
-            System.out.println("Error: Machinery State must be Active, Idle, or Maintenance");
-            return -1;
+            throw new RobotSafetyException(
+                    "Machinery State must be Active, Idle, or Maintenance");
         }
 
         // Assign machinery factor
