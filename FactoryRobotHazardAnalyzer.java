@@ -1,4 +1,4 @@
-// UC2: Accept Robot Hazard Inputs
+// UC2 & UC3: Factory Robot Hazard Analyzer
 // Author: Prajwal
 
 import java.util.Scanner;
@@ -8,31 +8,49 @@ public class FactoryRobotHazardAnalyzer {
     // Program entry point
     public static void main(String[] args) {
 
-        // Creating Scanner object for user input
         Scanner scanner = new Scanner(System.in);
 
-        // Taking arm precision input (double)
+        // UC2: Accept Robot Hazard Inputs
+
         System.out.print("Enter Arm Precision: ");
         double armPrecision = scanner.nextDouble();
 
-        // Taking worker density input (int)
         System.out.print("Enter Worker Density: ");
         int workerDensity = scanner.nextInt();
 
-        // Clearing buffer before taking String input
-        scanner.nextLine();
+        scanner.nextLine(); // Clear buffer
 
-        // Taking machinery state input (String)
         System.out.print("Enter Machinery State: ");
         String machineryState = scanner.nextLine();
 
-        // Echoing back the entered inputs
-        System.out.println("\n--- Entered Hazard Parameters ---");
-        System.out.println("Arm Precision: " + armPrecision);
-        System.out.println("Worker Density: " + workerDensity);
-        System.out.println("Machinery State: " + machineryState);
+        // UC3: Calculate Hazard Risk Score
 
-        // Closing scanner
+        double hazardRiskScore = calculateHazardRisk(armPrecision, workerDensity, machineryState);
+
+        // Displaying calculated hazard risk score
+        System.out.println("\n--- Hazard Analysis Result ---");
+        System.out.println("Hazard Risk Score: " + hazardRiskScore);
+
         scanner.close();
+    }
+
+    // Method to calculate hazard risk score
+    public static double calculateHazardRisk(double armPrecision, int workerDensity, String machineryState) {
+
+        // Assign machinery risk factor based on state
+        double machineryFactor;
+
+        if (machineryState.equalsIgnoreCase("Active")) {
+            machineryFactor = 1.5;
+        } else if (machineryState.equalsIgnoreCase("Idle")) {
+            machineryFactor = 1.0;
+        } else {
+            machineryFactor = 0.5;  // Maintenance or other states
+        }
+
+        // Business Logic Formula (Assumed Valid Inputs)
+        double hazardRisk = (workerDensity * machineryFactor) / armPrecision;
+
+        return hazardRisk;
     }
 }
