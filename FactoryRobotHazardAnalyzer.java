@@ -1,0 +1,2 @@
+public class FactoryRobotHazardAnalyzer git {
+}
